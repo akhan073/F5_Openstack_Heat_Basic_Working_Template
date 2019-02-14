@@ -1,5 +1,4 @@
 parameters:
-  #ve_cluster_ready_image: cluster_ready-BIG-IP-11.6.0.0.0.401.qcow2
   ve_image: BIGIP
   ve_flavor: BIGIQ-F5
   ssh_key: my_bigip_key
@@ -16,5 +15,4 @@ parameters:
 
 resource_registry:
   OS::Neutron::FourNetworks: heat_template_test_networks.yaml
-  #F5::BIGIP::ClusterableDevice: cluster_ready_ve_4_nic.yaml
   F5::BIGIP::StandaloneDevice: f5_ve_standalone_3_nic.yaml

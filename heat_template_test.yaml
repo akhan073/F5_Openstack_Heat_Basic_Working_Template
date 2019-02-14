@@ -3,10 +3,7 @@ heat_template_version: newton
 description: Setup infrastructure for testing F5 Heat Templates.
 
 parameters:
-#  ve_cluster_ready_image:
-#    type: string
-#    constraints:
-#      - custom_constraint: glance.image
+
   ve_image:
     type: string
     constraints:

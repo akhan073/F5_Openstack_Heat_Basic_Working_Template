@@ -1,0 +1,64 @@
+heat_template_version: newton
+
+description: Setup infrastructure for testing F5 Heat Templates.
+
+parameters:
+#  ve_cluster_ready_image:
+#    type: string
+#    constraints:
+#      - custom_constraint: glance.image
+  ve_image:
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+  ve_flavor:
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+  use_config_drive:
+    type: boolean
+    default: false
+  ssh_key:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  sec_group_name:
+    type: string
+  admin_password:
+    type: string
+    label: F5 VE Admin User Password
+    description: Password used to perform image import services
+  root_password:
+    type: string
+  license:
+    type: string
+  external_network:
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+
+resources:
+  # Plumb the newtorking for the BIG-IP instances
+  networking:
+    type: heat_template_test_networks.yaml
+    properties:
+      external_network: { get_param: external_network }
+      sec_group_name: { get_param: sec_group_name }
+   # Wait for networking to come up and launch a standalone BIG-IP
+  standalone_device:
+    # Reference another child template in the local directory
+    type: f5_ve_standalone_3_nic.yaml
+    depends_on: networking
+    properties:
+      ve_image: { get_param: ve_image }
+      ve_flavor: { get_param: ve_flavor }
+      ssh_key: { get_param: ssh_key }
+      use_config_drive: { get_param: use_config_drive }
+      sec_group_name: { get_param: sec_group_name }
+      admin_password: { get_param: admin_password }
+      root_password: { get_param: root_password }
+      license: { get_param: license }
+      external_network: { get_param: external_network }
+      mgmt_network: { get_attr: [networking, mgmt_network_name] }
+      network_1: { get_attr: [networking, client_data_network_name] }
+      network_2: { get_attr: [networking, server_data_network_name] }

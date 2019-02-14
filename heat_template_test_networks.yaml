@@ -1,0 +1,112 @@
+heat_template_version: newton
+
+description: >
+    Create the four networks needed for the heat plugin tests along with their subnets and connect them to the testlab router.
+
+parameters:
+  external_network:
+    type: string
+  sec_group_name:
+    type: string
+
+resources:
+  # Four networks
+  client_data_network:
+    type: OS::Neutron::Net
+    properties:
+      name: client_data_network
+  server_data_network:
+    type: OS::Neutron::Net
+    properties:
+      name: server_data_network
+  mgmt_network:
+    type: OS::Neutron::Net
+    properties:
+      name: mgmt_network
+  ha_network:
+    type: OS::Neutron::Net
+    properties:
+      name: ha_network
+  # And four accompanying subnets
+  client_data_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.1.1.0/24
+      dns_nameservers: [10.190.0.20]
+      network: { get_resource: client_data_network }
+  server_data_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.1.2.0/24
+      dns_nameservers: [10.190.0.20]
+      network: {get_resource: server_data_network }
+  mgmt_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.1.3.0/24
+      dns_nameservers: [10.190.0.20]
+      network: { get_resource: mgmt_network }
+  ha_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.1.4.0/24
+      dns_nameservers: [10.190.0.20]
+      network: { get_resource: ha_network }
+  # Create router for testlab
+  testlab_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: external_network }
+  # Connect networks to router interface
+  client_data_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: testlab_router }
+      subnet: { get_resource: client_data_subnet }
+  server_data_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: testlab_router }
+      subnet: { get_resource: server_data_subnet }
+  mgmt_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: testlab_router }
+      subnet: { get_resource: mgmt_subnet }
+  ha_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: testlab_router }
+      subnet: { get_resource: ha_subnet }
+  sec_group_name:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { get_param: sec_group_name }
+      rules:
+        - protocol: icmp
+          direction: ingress
+        - protocol: icmp
+          direction: egress
+        - protocol: udp
+          direction: ingress
+        - protocol: udp
+          direction: egress
+        - protocol: tcp
+          direction: ingress
+          port_range_min: 1
+          port_range_max: 65535
+        - protocol: tcp
+          direction: egress
+          port_range_min: 1
+          port_range_max: 65535
+
+outputs:
+  mgmt_network_name:
+    value: { get_attr: [mgmt_network, name] }
+  ha_network_name:
+    value: { get_attr: [ha_network, name] }
+  client_data_network_name:
+    value: { get_attr: [client_data_network, name] }
+  server_data_network_name:
+    value: { get_attr: [server_data_network, name] }

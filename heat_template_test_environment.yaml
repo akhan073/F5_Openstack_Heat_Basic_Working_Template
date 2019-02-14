@@ -1,0 +1,20 @@
+parameters:
+  #ve_cluster_ready_image: cluster_ready-BIG-IP-11.6.0.0.0.401.qcow2
+  ve_image: BIGIP
+  ve_flavor: BIGIQ-F5
+  ssh_key: my_bigip_key
+  sec_group_name: default
+  admin_password: admin_password
+  root_password: root_password
+  license: xxxxx
+  external_network: floating_net
+  mgmt_network: F5-WAF_int_net
+  network_1: WAN-Network
+  network_1_name: WAN-Network
+  network_2: LAN-NETWORK
+  network_2_name: LAN-NETWORK
+
+resource_registry:
+  OS::Neutron::FourNetworks: heat_template_test_networks.yaml
+  #F5::BIGIP::ClusterableDevice: cluster_ready_ve_4_nic.yaml
+  F5::BIGIP::StandaloneDevice: f5_ve_standalone_3_nic.yaml

@@ -11,16 +11,13 @@ This Template has got four YAML file as Below:
  - heat_template_test_environment.yaml - `This is the environment file (caution : please update this master file carefully as per the existing environment).`
  - heat_template_test_networks.yaml - `This Template Create the four networks needed for the heat plugin tests along with their subnets and connect them to the testlab router.`
 
- **NOTE:** This Template is build to have an offline deployment, If you require to orchestrate the Installation, Configuration and Provisioning of the BIG-IP VE then please make use of https://github.com/F5Networks/f5-openstack-hot
-
+ **NOTE:** This Template is build to have an offline deployment.
 
 ## Supported Versions
 
 ### BIG-IP VE
 The templates are developed for standard BIG-IP Virtual Edition images version **13.0 or later**.
 Earlier versions may require image patching to create OpenStack-ready images in *glance*.
-**Note:**
-Refer to [f5-openstack-heat](https://github.com/F5Networks/f5-openstack-heat) for templates that launch pre-version 13.0 instances.
 
 ### OpenStack
 The templates are working fine on an operational OpenStack Newton deployment. (This can be tested with other OpenStack versions as well)
